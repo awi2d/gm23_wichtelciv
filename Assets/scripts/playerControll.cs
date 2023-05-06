@@ -10,13 +10,13 @@ public class playerControll : MonoBehaviour
     public float movementSpeed = 0.1f;
 
     GameObject lastObject;
+    GameObject mapHolding;
 
-    private List<int> wichtel_movement_left;
     // Start is called before the first frame update
     void Start()
     {
-        this.wichtel_movement_left = new List<int>{};
         this.lastObject = null;
+        this.mapHolding = GameObject.FindGameObjectsWithTag("clickable_holding")[0];  // assumes exactly one map_holding in each scene
     }
 
     void FixedUpdate(){
@@ -24,6 +24,27 @@ public class playerControll : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
         transform.position = transform.position + new Vector3(this.movementSpeed*horizontalInput, 0, this.movementSpeed*verticalInput);
+        if (Input.GetKey(KeyCode.Return))
+        {
+            Debug.Log("runde weiter");
+            Wichtel[] wichtel = (Wichtel[])GameObject.FindObjectsOfType(typeof(Wichtel));
+            foreach (Wichtel wicht in wichtel)
+            {
+                wicht.GetComponent<Clickable>().OnGameTick();
+            }
+            House[] houses = (House[])GameObject.FindObjectsOfType(typeof(House));
+            foreach (House house in houses)
+            {
+                house.GetComponent<Clickable>().OnGameTick();
+            }
+            Ground[] grounds = (Ground[])GameObject.FindObjectsOfType(typeof(Ground));
+            foreach (Ground ground in grounds)
+            {
+                ground.GetComponent<Clickable>().OnGameTick();
+            }
+
+        }
+        //TODO thema vom GameJam: Welt kippt wenn ungleich belasted.
     }
 
     // Update is called once per frame
@@ -64,8 +85,5 @@ public class playerControll : MonoBehaviour
         }
     }
  }
-
-    //on rundeweiter:
-    //  reset wichtels can_move, do action for every city, adjust schraeglage von ground, check for win.
 
 }

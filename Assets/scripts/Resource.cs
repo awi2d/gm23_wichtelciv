@@ -11,6 +11,9 @@ public class Resource : MonoBehaviour, Clickable
     public int resource;
     public int amount;
 
+    public int posx;
+    public int posy;
+
     GameObject textInWorld;
 
     public void OnClick(GameObject lastObject)
@@ -21,25 +24,27 @@ public class Resource : MonoBehaviour, Clickable
             textInWorld = GameObject.Instantiate(text);
             textInWorld.transform.position = transform.position;
             resource = (int)rEnum.Copper;
+            Debug.Log("Resource on " + this.posx + ", " + this.posy + ":\nesource = " + this.resource+ ", amount = "+this.amount);
         }
-        try
+        if(lastObject != null && lastObject.name == worldgen.name_wicht)
         {
             Wichtel w = lastObject.GetComponent<Wichtel>();
-            if (w != null)
+            if(w.get_posx() == posx && w.get_posy() == posy)
             {
-                w.resource = this;
-                Debug.Log("On Resource");
+                w.resource = this.resource;
+                Debug.Log("Collect resource");
+                this.amount--;
+                if (this.amount <= 0)
+                {
+                    worldgen.destroy_resource(this.gameObject);
+                }
             }
-        }
-        catch
-        {
-
         }
     }
 
     public void OnGameTick()
     {
-        throw new System.NotImplementedException();
+        //resources do nothing OnGameTick
     }
 
     public void unselect()
@@ -47,7 +52,14 @@ public class Resource : MonoBehaviour, Clickable
         //throw new System.NotImplementedException();
         Destroy(textInWorld);
     }
-
+    public int get_posx()
+    {
+        return this.posx;
+    }
+    public int get_posy()
+    {
+        return this.posy;
+    }
     // Start is called before the first frame update
     void Start()
     {

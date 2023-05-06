@@ -107,8 +107,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1055504997299785966}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd1024bf35b384847a2f8c9741b2c2fc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1581e907c6b26254192bc22b07412557, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 669390228861739976, guid: f9e0bc1778462924b9dfbce8b0be8f3e, type: 3}
-  resource_String: Copper
+  text: {fileID: 669390228861739976, guid: 316cb499bfc398740aceed114915895c, type: 3}
+  resource_String: Mushroom
+  resource: 2
+  amount: 1
+  posx: 0
+  posy: 0

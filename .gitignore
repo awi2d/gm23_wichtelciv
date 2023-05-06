@@ -45,8 +45,8 @@ ExportedObj/
 *.opendb
 *.VC.db
 
-#No facebook allowed
-*.meta
+#I think the .meta files are necessary for the prefabs to work
+#*.meta
 
 # Unity3D generated meta files
 *.pidb.meta

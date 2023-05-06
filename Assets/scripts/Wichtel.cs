@@ -7,7 +7,7 @@ public class Wichtel : MonoBehaviour, Clickable
 {
     bool moveable = true;
     public Vector2 inv;
-    public Resource resource;
+    public int resource;  // <0 := no resource, otherwise as in ResourceNameSpace
     private ParticleSystem particlesystem;
     
     public int posx;
@@ -15,16 +15,32 @@ public class Wichtel : MonoBehaviour, Clickable
     
     public void OnClick(GameObject lastObject)
     {
-        Debug.Log("autschie");
         if(this.moveable){
             this.particlesystem.enableEmission = true;
+        }
+        if (lastObject == this.gameObject && resource >= 0 && worldgen.get_house(this.posx, this.posy) == null)
+        {
+            Debug.Log("bould house");
+            worldgen.spawn_house(this.posx, this.posy);
+            this.resource = -1;
+        }
+        if(lastObject == null)
+        {
+            Debug.Log("Wicht on " + this.posx + ", " + this.posy + ":\nresource = " + resource);
         }
     }
 
     public void unselect(){
         this.particlesystem.enableEmission = false;
     }
-
+    public int get_posx()
+    {
+        return this.posx;
+    }
+    public int get_posy()
+    {
+        return this.posy;
+    }
 
     public bool getmoveable()
     {
@@ -38,7 +54,10 @@ public class Wichtel : MonoBehaviour, Clickable
     {
         this.particlesystem = GetComponent<ParticleSystem>();
         this.particlesystem.enableEmission = false;
+        this.resource = -1;
     }
+
+
 
     // Update is called once per frame
     void Update()
@@ -48,9 +67,6 @@ public class Wichtel : MonoBehaviour, Clickable
 
     public void OnGameTick()
     {
-        if(resource != null)
-        {
-
-        }
+        this.moveable = true;
     }
 }
