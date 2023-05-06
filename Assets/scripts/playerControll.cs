@@ -42,6 +42,9 @@ public class playerControll : MonoBehaviour
                     {
                         Clickable clicker = hit.transform.gameObject.GetComponent<Clickable>();
                         clicker.OnClick(lastObject);
+                        if(lastObject != null){
+                            lastObject.GetComponent<Clickable>().unselect();
+                        }
                         lastObject = hit.transform.gameObject;
                     }
                     catch (Exception e)
@@ -54,8 +57,11 @@ public class playerControll : MonoBehaviour
                     
                 }
         }else{
-            lastObject = null;
-            this.current_selection = null;
+            if(lastObject != null){
+                lastObject.GetComponent<Clickable>().unselect();
+                lastObject = null;
+            }
+            
         }
     }
  }

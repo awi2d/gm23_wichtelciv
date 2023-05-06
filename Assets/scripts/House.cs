@@ -8,7 +8,9 @@ public class House : MonoBehaviour, Clickable
     {
         throw new System.NotImplementedException();
     }
-
+    public void unselect(){
+        
+    }
     // Start is called before the first frame update
     void Start()
     {

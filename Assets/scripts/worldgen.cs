@@ -15,8 +15,8 @@ public class worldgen : MonoBehaviour
     private static double tilesize = 6.6; // ecke zu ecke
     private static double tilewidth = Mathf.Sqrt(3)*0.5*tilesize;  // distanz kante zu gegenüberliegender kante
     private static double rowheight = 1.5*0.5*tilesize; // length of one edge of the hexagone
-    private static Vector3 wichtel_offset = new Vector3((float) (tilesize*0.1), 1, 0);
-    private static Vector3 haus_offset = new Vector3(0, 1, (float) (tilesize*0.1));
+    public static Vector3 wichtel_offset = new Vector3((float) (tilesize*0.1), 1, 0);
+    public static Vector3 haus_offset = new Vector3(0, 1, (float) (tilesize*0.1));
     Vector3 intpos2wordpos(int x, int y){
         return new Vector3((float)(tilewidth*(x+0.5*y)), 0, (float)(rowheight*y));
     }

@@ -5,9 +5,16 @@ using UnityEngine;
 public class Wichtel : MonoBehaviour, Clickable
 {
     bool moveable = true;
+    private ParticleSystem particlesystem;
     public void OnClick(GameObject lastObject)
     {
         Debug.Log("autschie");
+        this.particlesystem.enableEmission = true;
+
+    }
+
+    public void unselect(){
+        this.particlesystem.enableEmission = false;
     }
 
 
@@ -18,7 +25,8 @@ public class Wichtel : MonoBehaviour, Clickable
     // Start is called before the first frame update
     void Start()
     {
-        
+        this.particlesystem = GetComponent<ParticleSystem>();
+        this.particlesystem.enableEmission = false;
     }
 
     // Update is called once per frame

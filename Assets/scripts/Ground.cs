@@ -13,7 +13,7 @@ public class Ground : MonoBehaviour, Clickable
             Wichtel w = lastObject.GetComponent<Wichtel>();
             if (w != null && w.getmoveable())
             {
-                lastObject.transform.position = this.transform.position;
+                lastObject.transform.position = this.transform.position+worldgen.wichtel_offset;
             }
         }
         catch(System.Exception e)
@@ -21,6 +21,10 @@ public class Ground : MonoBehaviour, Clickable
             Debug.Log(e);
         }
 
+    }
+
+    public void unselect(){
+        
     }
 
     // Start is called before the first frame update
