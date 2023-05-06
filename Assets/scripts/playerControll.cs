@@ -12,12 +12,11 @@ public class playerControll : MonoBehaviour
     GameObject lastObject;
 
     private List<int> wichtel_movement_left;
-    private GameObject current_selection;
     // Start is called before the first frame update
     void Start()
     {
         this.wichtel_movement_left = new List<int>{};
-        this.current_selection = null;
+        this.lastObject = null;
     }
 
     void FixedUpdate(){
