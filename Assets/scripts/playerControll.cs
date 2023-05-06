@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class playerControll : MonoBehaviour
@@ -7,13 +9,14 @@ public class playerControll : MonoBehaviour
 
     public float movementSpeed = 0.1f;
 
+    GameObject lastObject;
+
     private List<int> wichtel_movement_left;
-    private GameObject current_selection;
     // Start is called before the first frame update
     void Start()
     {
         this.wichtel_movement_left = new List<int>{};
-        this.current_selection = null;
+        this.lastObject = null;
     }
 
     void FixedUpdate(){
@@ -32,36 +35,32 @@ public class playerControll : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast( ray, out hit, 100 )) {
             //raycast hit something <-> player clicked on something.
-            System.String name = hit.transform.gameObject.name;
-            Debug.Log("player clicked on "+name);
-            Debug.Log("current_selection ="+this.current_selection);
-            if(this.current_selection == null){
-                if(System.String.Equals(name, "wichtel")){
-                    Debug.Log("set Selection to "+name);
-                    this.current_selection = hit.transform.gameObject;
+                if (hit.transform.name != null)
+                {
+                    try
+                    {
+                        Clickable clicker = hit.transform.gameObject.GetComponent<Clickable>();
+                        clicker.OnClick(lastObject);
+                        if(lastObject != null){
+                            lastObject.GetComponent<Clickable>().unselect();
+                        }
+                        lastObject = hit.transform.gameObject;
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e);
+                    }   
                 }
-                if(System.String.Equals(name, "haus")){
-                    Debug.Log("haus menue maybe?");
-                    //do whatever
+                else
+                {
+                    
                 }
-            }else{
-                if(System.String.Equals(this.current_selection.name, "wichtel") && System.String.Equals(name, "ground(Clone)")){
-                    ground_position gp = hit.transform.gameObject.GetComponent<ground_position>();
-                    Debug.Log("move wichtel to ("+gp.posx+", "+gp.posy+")");
-                    //calculate what ground tile was hit
-                    // check if it is within movement range of wichte.
-                    // move wichtel there
-                    this.current_selection.transform.position = hit.transform.position+new Vector3(0, 1, 0);
-                    // substract movement length from wichtel_movement_left
-                }
-                if(System.String.Equals(this.current_selection.name, "wichtel") && System.String.Equals(name, "haus")){
-                    Debug.Log("wichtel nach Haus");
-                    //do whatever
-                }
-                this.current_selection = null;
-            }
         }else{
-            this.current_selection = null;
+            if(lastObject != null){
+                lastObject.GetComponent<Clickable>().unselect();
+                lastObject = null;
+            }
+            
         }
     }
  }
