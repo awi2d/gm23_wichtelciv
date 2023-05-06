@@ -6,4 +6,6 @@ public interface Clickable
 {
     public abstract void OnClick(GameObject lastObject);
     public abstract void unselect();
+
+    public abstract void OnGameTick();
 }

@@ -14,6 +14,7 @@ public class Ground : MonoBehaviour, Clickable
             if (w != null && w.getmoveable())
             {
                 lastObject.transform.position = this.transform.position+worldgen.wichtel_offset;
+                w.resource = null;
             }
         }
         catch(System.Exception e)
@@ -21,6 +22,11 @@ public class Ground : MonoBehaviour, Clickable
             Debug.Log(e);
         }
 
+    }
+
+    public void OnGameTick()
+    {
+        throw new System.NotImplementedException();
     }
 
     public void unselect(){

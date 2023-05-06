@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static ResourceEnum;
 
 public class Wichtel : MonoBehaviour, Clickable
 {
     bool moveable = true;
+    public Vector2 inv;
+    public Resource resource;
     private ParticleSystem particlesystem;
     public void OnClick(GameObject lastObject)
     {
@@ -33,5 +36,13 @@ public class Wichtel : MonoBehaviour, Clickable
     void Update()
     {
         
+    }
+
+    public void OnGameTick()
+    {
+        if(resource != null)
+        {
+
+        }
     }
 }

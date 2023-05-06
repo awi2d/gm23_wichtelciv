@@ -8,6 +8,12 @@ public class House : MonoBehaviour, Clickable
     {
         throw new System.NotImplementedException();
     }
+
+    public void OnGameTick()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void unselect(){
         
     }
