@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static ResourceEnum;
+using ResourceNameSpace;
 
 public class Wichtel : MonoBehaviour, Clickable
 {
