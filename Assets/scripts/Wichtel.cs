@@ -9,11 +9,16 @@ public class Wichtel : MonoBehaviour, Clickable
     public Vector2 inv;
     public Resource resource;
     private ParticleSystem particlesystem;
+    
+    public int posx;
+    public int posy;
+    
     public void OnClick(GameObject lastObject)
     {
         Debug.Log("autschie");
-        this.particlesystem.enableEmission = true;
-
+        if(this.moveable){
+            this.particlesystem.enableEmission = true;
+        }
     }
 
     public void unselect(){
@@ -24,6 +29,9 @@ public class Wichtel : MonoBehaviour, Clickable
     public bool getmoveable()
     {
         return moveable;
+    }
+    public void setmoveable(bool sm){
+        this.moveable = sm;
     }
     // Start is called before the first frame update
     void Start()
