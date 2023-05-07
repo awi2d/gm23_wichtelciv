@@ -50,13 +50,13 @@ public class playerControll : MonoBehaviour
             foreach(GameObject clickable in worldgen.clickables){
                 float w = 0f;
                 if(clickable.name == worldgen.name_wicht){
-                    w = 0.1f;
+                    w = 0.2f;
                 }
                 if(clickable.name == worldgen.name_house){
-                    w = 0.3f;
+                    w = 0.6f;
                 }
                 if(clickable.name == worldgen.name_resource){
-                    w = 0.001f;
+                    w = 0.002f;
                 }
                 Clickable tmp = clickable.GetComponent<Clickable>();
                 x_axis_weight += w*(4.5f-tmp.get_posx()); // 4.5f, 0.5f is center of world, approximatly
