@@ -12,6 +12,9 @@ public class playerControll : MonoBehaviour
     GameObject lastObject;
     GameObject mapHolding;
 
+    private float x_yaw = 0;
+    private float y_yaw = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,8 +26,48 @@ public class playerControll : MonoBehaviour
         // Move camera
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-        transform.position = transform.position + new Vector3(this.movementSpeed*horizontalInput, 0, this.movementSpeed*verticalInput);
-        if (Input.GetKey(KeyCode.Return))
+        transform.position = transform.position - new Vector3(this.movementSpeed*horizontalInput, 0, this.movementSpeed*verticalInput);
+        
+    }
+
+    // Update is called once per frame
+ void Update() {
+    //if mouse is clicked:
+    //  get what was clicked on (unit, city or tile) and act accordingly (selecting that thing or moving the selected unit to that tile)
+    if (Input.GetMouseButtonDown(0)) {
+        Ray ray = Camera.main.ScreenPointToRay( Input.mousePosition );
+        RaycastHit hit;
+        if (Physics.Raycast( ray, out hit, 100 )) {
+            //raycast hit something <-> player clicked on something.
+                if (hit.transform.name != null)
+                {
+                    Clickable clicker = worldgen.get_clicker(hit.transform.gameObject);
+                    
+                    if(clicker != null){
+                        clicker.OnClick(lastObject);
+                        if(lastObject != null){
+                            worldgen.get_clicker(lastObject).unselect();
+                        }
+                        lastObject = hit.transform.gameObject;
+                    }else{
+                        Debug.Log("clicker of "+hit.transform.gameObject.name+" not found");
+                    }
+                        
+                }
+                else
+                {
+                    
+                }
+        }else{
+            if(lastObject != null){
+                worldgen.get_clicker(lastObject).unselect();
+                lastObject = null;
+            }
+            
+        }
+    }
+
+    if (Input.GetKey(KeyCode.Return))
         {
             Debug.Log("runde weiter");
             Wichtel[] wichtel = (Wichtel[])GameObject.FindObjectsOfType(typeof(Wichtel));
@@ -43,47 +86,54 @@ public class playerControll : MonoBehaviour
                 ground.GetComponent<Clickable>().OnGameTick();
             }
 
-        }
-        //TODO thema vom GameJam: Welt kippt wenn ungleich belasted.
-    }
-
-    // Update is called once per frame
- void Update() {
-    //if mouse is clicked:
-    //  get what was clicked on (unit, city or tile) and act accordingly (selecting that thing or moving the selected unit to that tile)
-    if (Input.GetMouseButtonDown(0)) {
-        Ray ray = Camera.main.ScreenPointToRay( Input.mousePosition );
-        RaycastHit hit;
-        if (Physics.Raycast( ray, out hit, 100 )) {
-            //raycast hit something <-> player clicked on something.
-                if (hit.transform.name != null)
-                {
-                    try
-                    {
-                        Clickable clicker = hit.transform.gameObject.GetComponent<Clickable>();
-                        clicker.OnClick(lastObject);
-                        if(lastObject != null){
-                            lastObject.GetComponent<Clickable>().unselect();
-                        }
-                        lastObject = hit.transform.gameObject;
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogException(e);
-                    }   
+            // kipp welt
+            // kipp about axis-x
+            float x_axis_weight = 0f;
+            float y_axis_weight = 0f;
+            foreach(GameObject clickable in worldgen.clickables){
+                float w = 0f;
+                if(clickable.name == worldgen.name_wicht){
+                    w = 0.2f;
                 }
-                else
-                {
-                    
+                if(clickable.name == worldgen.name_house){
+                    w = 0.4f;
                 }
-        }else{
-            if(lastObject != null){
-                lastObject.GetComponent<Clickable>().unselect();
-                lastObject = null;
+                if(clickable.name == worldgen.name_resource){
+                    w = (float)(0.002f*clickable.GetComponent<Resource>().amount);
+                }
+                Clickable tmp = worldgen.get_clicker(clickable);
+                x_axis_weight += w*(4.5f-tmp.get_posx()); // 4.5f, 0.5f is center of world, approximatly
+                y_axis_weight += w*(tmp.get_posy()-0.5f);
             }
-            
+            //maybe devide by total weight?
+            Debug.Log("axis weight: "+x_axis_weight+", "+y_axis_weight);
+            this.x_yaw += 0.5f*x_axis_weight;
+            this.y_yaw += 0.5f*y_axis_weight;
+            worldgen.rotate_world(this.y_yaw, this.x_yaw);// 1.-parameter: positiv kippt nach hinten. y-achse: positiv kippt nach links
+            if(this.x_yaw < -90.0f || this.x_yaw > 90.0f || this.y_yaw < -90.0f || this.y_yaw > 90.0f){
+                Debug.Log("The world lost balance, you lose.");
+                Application.Quit();
+            }
+            foreach(GameObject clickable in worldgen.clickables){
+                Clickable tmp = worldgen.get_clicker(clickable);
+                clickable.transform.position = worldgen.intpos2wordpos(tmp.get_posx(), tmp.get_posy());
+                    if(clickable.name == worldgen.name_wicht){
+                        clickable.transform.position += worldgen.wichtel_offset;
+                    }
+                    if(clickable.name == worldgen.name_resource){
+                        clickable.transform.position += worldgen.resource_offset;
+                    }
+                    if(clickable.name == worldgen.name_house){
+                        clickable.transform.position += worldgen.haus_offset;
+                    }
+                    clickable.transform.rotation = worldgen.world_rotation;
+            }
+            // check for victory
+            if(worldgen.get_house(0, 0) != null && worldgen.get_house(4, -4) != null && worldgen.get_house(9, -4) != null && worldgen.get_house(9, 0) != null && worldgen.get_house(5, 4) != null && worldgen.get_house(0, 4) != null){
+                Debug.Log("Ritual completet, you won!");
+
+            }
         }
-    }
  }
 
 }

@@ -8,12 +8,15 @@ public class worldgen : MonoBehaviour
 {
     //to be set to the prefabs in the unity editor
     public GameObject ground_tile;
+    public GameObject ground_tile1;
+    public GameObject ground_tile2;
+    public GameObject ground_tile3;
     public GameObject wichtel;
     public GameObject haus;
     public GameObject resource;
-    Vector2Int[] wicht_startpos = new[] { new Vector2Int(0, 0), new Vector2Int(0, 1), new Vector2Int(0, 4) };
-    Vector2Int[] haus_startpos = new[] { new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(4, 0) };
-    Vector2Int[] resource_startpos = new[] { new Vector2Int(1, 1), new Vector2Int(2, 2), new Vector2Int(4, 4) };
+    Vector2Int[] wicht_startpos = new[] {new Vector2Int(4, 0) };
+    Vector2Int[] haus_startpos = new[] {new Vector2Int(4, 0)};
+    Vector2Int[] resource_startpos = new[] {new Vector2Int(4, -1), new Vector2Int(5, 1)};
     public const int mapsize = 5;
 
     //constants
@@ -22,26 +25,52 @@ public class worldgen : MonoBehaviour
     public static string name_house = "house";
     public static string name_ground = "ground";
     public static string name_resource = "resource";
-    public static GameObject static_ground_tile;
+    public static GameObject[] static_ground_tile;
     private static double tilesize = 6.6; // ecke zu ecke
     private static double tilewidth = Mathf.Sqrt(3)*0.5*tilesize;  // distanz kante zu gegenüberliegender kante
     private static double rowheight = 1.5*0.5*tilesize; // length of one edge of the hexagone
-    public static Vector3 wichtel_offset = new Vector3((float) (tilesize*0.1), 1, 0);
-    public static Vector3 haus_offset = new Vector3(0, 2, (float) (tilesize*0.1));
-    public static Vector3 resource_offset = new Vector3((float) (-tilesize * 0.1), 1, 0);
+    public static Vector3 wichtel_offset = new Vector3((float) (tilesize*0.3), 1, 0);
+    public static Vector3 haus_offset = new Vector3(0, 1.1f, (float) (tilesize*0.3));
+    public static Vector3 resource_offset = new Vector3((float) (-tilesize * 0.3), 1, 0);
     public static Transform this_transfrom = null;
     public static Quaternion ground_rotation;
+    public static Quaternion world_rotation;
 
+    public static Clickable get_clicker(GameObject obj){
+        if(obj.name == worldgen.name_ground){
+            return obj.transform.Find("Cylinder").gameObject.GetComponent<Clickable>();
+        }else{
+            return obj.GetComponent<Clickable>();
+        }
+    }
+    public static void rotate_world(float x, float y){
+        if(x < -45.0f){
+            x = -45.0f;
+        }
+        if(x > 45.0f){
+            x = 45.0f;
+        }
+
+        if(y < -45.0f){
+            y = -45.0f;
+        }
+        if(y > 45.0f){
+            y = 45.0f;
+        }
+        world_rotation.eulerAngles = new Vector3(x, 0, y);
+    }
     //cache, sort of
     public static List<GameObject> clickables = new List<GameObject>();  // all objects that implement the Clickable interface, probably
+
     public static Vector3 intpos2wordpos(int x, int y){
-        return new Vector3((float)(tilewidth*(x+0.5*y)), 0, (float)(rowheight*y));
+        Vector3 worldpos = new Vector3((float)(tilewidth*(x+0.5*y)), 0, (float)(rowheight*y));
+        return worldgen.world_rotation*worldpos;
     }
     public static void spawn_ground(int posx, int posy)
     {
-        GameObject gt = Instantiate(worldgen.singelton_this.ground_tile, intpos2wordpos(posx, posy), worldgen.ground_rotation);
-        gt.GetComponent<Ground>().posx = posx;
-        gt.GetComponent<Ground>().posy = posy;
+        GameObject gt = Instantiate(worldgen.static_ground_tile[UnityEngine.Random.Range(1, 4)], intpos2wordpos(posx, posy), Quaternion.identity);
+        gt.transform.Find("Cylinder").gameObject.GetComponent<Ground>().posx = posx;
+        gt.transform.Find("Cylinder").gameObject.GetComponent<Ground>().posy = posy;
         gt.name = worldgen.name_ground;
         gt.transform.parent = this_transfrom;
         worldgen.clickables.Add(gt);
@@ -57,7 +86,7 @@ public class worldgen : MonoBehaviour
     }
     public static void spawn_house(int posx, int posy)
     {
-        GameObject haus_obj = Instantiate(worldgen.singelton_this.haus, intpos2wordpos(posx, posy), Quaternion.identity);
+        GameObject haus_obj = Instantiate(worldgen.singelton_this.haus, intpos2wordpos(posx, posy)+worldgen.haus_offset, Quaternion.identity);
         haus_obj.name = worldgen.name_house;
         haus_obj.GetComponent<House>().posx = posx;
         haus_obj.GetComponent<House>().posy = posy;
@@ -71,6 +100,8 @@ public class worldgen : MonoBehaviour
         resource_obj.GetComponent<Resource>().posx = posx;
         resource_obj.GetComponent<Resource>().posy = posy;
         resource_obj.GetComponent<Resource>().resource_String = Enum.GetName(typeof(rEnum), type);
+        resource_obj.GetComponent<Resource>().resource = (int)type;
+        resource_obj.GetComponent<Resource>().amount = 1;
         resource_obj.transform.parent = this_transfrom;
         worldgen.clickables.Add(resource_obj);
     }
@@ -86,7 +117,7 @@ public class worldgen : MonoBehaviour
         List<GameObject> r = new List<GameObject> ();
         foreach(GameObject obj in worldgen.clickables)
         {
-            if(obj.GetComponent<Clickable>().get_posx() == posx && obj.GetComponent<Clickable>().get_posy() == posy)
+            if(worldgen.get_clicker(obj).get_posx() == posx && worldgen.get_clicker(obj).get_posy() == posy)
             {
                 r.Add(obj);
             }
@@ -98,7 +129,7 @@ public class worldgen : MonoBehaviour
     {
         foreach (GameObject obj in worldgen.clickables)
         {
-            if (obj.GetComponent<Clickable>().get_posx() == posx && obj.GetComponent<Clickable>().get_posy() == posy && obj.name == worldgen.name_wicht)
+            if (obj.name == worldgen.name_wicht && worldgen.get_clicker(obj).get_posx() == posx && worldgen.get_clicker(obj).get_posy() == posy)
             {
                 return obj;
             }
@@ -110,7 +141,7 @@ public class worldgen : MonoBehaviour
     {
         foreach (GameObject obj in worldgen.clickables)
         {
-            if (obj.GetComponent<Clickable>().get_posx() == posx && obj.GetComponent<Clickable>().get_posy() == posy && obj.name == worldgen.name_house)
+            if (worldgen.get_clicker(obj).get_posx() == posx && worldgen.get_clicker(obj).get_posy() == posy && obj.name == worldgen.name_house)
             {
                 return obj;
             }
@@ -122,7 +153,7 @@ public class worldgen : MonoBehaviour
     {
         foreach (GameObject obj in worldgen.clickables)
         {
-            if (obj.GetComponent<Clickable>().get_posx() == posx && obj.GetComponent<Clickable>().get_posy() == posy && obj.name == worldgen.name_resource)
+            if (worldgen.get_clicker(obj).get_posx() == posx && worldgen.get_clicker(obj).get_posy() == posy && obj.name == worldgen.name_resource)
             {
                 return obj;
             }
@@ -135,6 +166,8 @@ public class worldgen : MonoBehaviour
         {
             worldgen.this_transfrom = this.GetComponent<Transform>();
             worldgen.singelton_this = this;
+            worldgen.world_rotation = Quaternion.identity;
+            worldgen.static_ground_tile = new GameObject[]{this.ground_tile, this.ground_tile1, this.ground_tile2, this.ground_tile3};
         }
         else
         {
@@ -169,7 +202,7 @@ public class worldgen : MonoBehaviour
         }
         for(int i=0; i< resource_startpos.Length; i++)
         {
-            worldgen.spawn_resouce(resource_startpos[i].x, resource_startpos[i].y, rEnum.Mushroom);
+            worldgen.spawn_resouce(resource_startpos[i].x, resource_startpos[i].y, rEnum.Wood);
         }
     }
 }

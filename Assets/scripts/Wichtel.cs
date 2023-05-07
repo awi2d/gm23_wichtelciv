@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ResourceNameSpace;
+using UnityEngine.UI;
 
 public class Wichtel : MonoBehaviour, Clickable
 {
+    public Sprite icon_mushroom;
+    public Sprite icon_wood;
+    public Sprite icon_copper;
     bool moveable = true;
-    public Vector2 inv;
-    public int resource;  // <0 := no resource, otherwise as in ResourceNameSpace
+    private int resource;  // <0 := no resource, otherwise as in ResourceNameSpace
     private ParticleSystem particlesystem;
     
     public int posx;
@@ -22,12 +25,35 @@ public class Wichtel : MonoBehaviour, Clickable
         {
             Debug.Log("bould house");
             worldgen.spawn_house(this.posx, this.posy);
-            this.resource = -1;
+            this.set_resource(-1);
         }
         if(lastObject == null || lastObject.name == worldgen.name_ground)
         {
             Debug.Log("Wicht on " + this.posx + ", " + this.posy + ":\nresource = " + resource);
         }
+    }
+
+    public void set_resource(int type){
+        this.resource = type;
+        if(type < 0){
+            this.transform.GetChild(0).gameObject.SetActive(false);
+        }else{
+            this.transform.GetChild(0).gameObject.SetActive(true);
+            if(type == 0){
+                this.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = this.icon_copper;// canvas is only child
+            }
+            if(type == 1){
+                this.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = this.icon_wood;
+            }
+            if(type == 2){
+                this.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = this.icon_mushroom;
+            }
+        }
+        
+        // set canvas-child.image to correct icon
+    }
+    public int get_resource(){
+        return this.resource;
     }
 
     public void unselect(){
@@ -54,7 +80,7 @@ public class Wichtel : MonoBehaviour, Clickable
     {
         this.particlesystem = GetComponent<ParticleSystem>();
         this.particlesystem.enableEmission = false;
-        this.resource = -1;
+        this.set_resource(-1);
     }
 
 

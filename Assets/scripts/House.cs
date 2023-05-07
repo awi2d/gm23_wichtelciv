@@ -12,10 +12,10 @@ public class House : MonoBehaviour, Clickable
         if(lastObject != null && lastObject.name == worldgen.name_wicht)
         {
             Wichtel w = lastObject.GetComponent<Wichtel>();
-            if (w.posx == this.posx && w.posy == this.posy && w.resource >= 0)
+            if (w.posx == this.posx && w.posy == this.posy && w.get_resource() >= 0)
             {
                 this.num_resources++;
-                w.resource = -1;
+                w.set_resource(-1);
                 Debug.Log("add Resource to house");
 
             }
