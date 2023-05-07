@@ -7,5 +7,8 @@ namespace ResourceNameSpace
     enum rEnum:int{
     Copper = 0,
     Wood = 1,
-    Mushroom = 2};
+    Mushroom = 2
+};
+
+    
 }
