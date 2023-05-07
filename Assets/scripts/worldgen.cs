@@ -14,9 +14,9 @@ public class worldgen : MonoBehaviour
     public GameObject wichtel;
     public GameObject haus;
     public GameObject resource;
-    Vector2Int[] wicht_startpos = new[] { new Vector2Int(0, 0), new Vector2Int(0, 1), new Vector2Int(0, 4) };
-    Vector2Int[] haus_startpos = new[] { new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(4, 0) };
-    Vector2Int[] resource_startpos = new[] { new Vector2Int(1, 1), new Vector2Int(2, 2), new Vector2Int(4, 4) };
+    Vector2Int[] wicht_startpos = new[] {new Vector2Int(4, 0) };
+    Vector2Int[] haus_startpos = new[] {new Vector2Int(4, 0)};
+    Vector2Int[] resource_startpos = new[] {new Vector2Int(4, -1), new Vector2Int(5, 1)};
     public const int mapsize = 5;
 
     //constants
@@ -45,20 +45,16 @@ public class worldgen : MonoBehaviour
     }
     public static void rotate_world(float x, float y){
         if(x < -45.0f){
-            Debug.Log("The world lost balance, you lose.");
             x = -45.0f;
         }
         if(x > 45.0f){
-            Debug.Log("The world lost balance, you lose.");
             x = 45.0f;
         }
 
         if(y < -45.0f){
-            Debug.Log("The world lost balance, you lose.");
             y = -45.0f;
         }
         if(y > 45.0f){
-            Debug.Log("The world lost balance, you lose.");
             y = 45.0f;
         }
         world_rotation.eulerAngles = new Vector3(x, 0, y);

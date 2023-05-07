@@ -44,7 +44,7 @@ public class Ground : MonoBehaviour, Clickable
 
     public void OnGameTick()
     {
-        if(Random.Range(0, 10) >= 9)  // 0.1 chance das eine neue Resource entsteht
+        if(Random.Range(0, 100) == 9)  // 0.1 chance das eine neue Resource entsteht
         {
             GameObject res = worldgen.get_resource(this.posx, this.posy);
             if(res == null)

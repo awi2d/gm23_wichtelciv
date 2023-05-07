@@ -20,7 +20,7 @@ public class Resource : MonoBehaviour, Clickable
     {
         if (lastObject == null || lastObject.name == worldgen.name_ground)
         {
-            text.GetComponent<TextMesh>().text = resource_String;
+            text.GetComponent<TextMesh>().text = resource_String+":"+this.amount;
             textInWorld = GameObject.Instantiate(text);
             textInWorld.transform.position = transform.position;
             Debug.Log("Resource on " + this.posx + ", " + this.posy + ":\nesource = " + this.resource+ ", amount = "+this.amount);
