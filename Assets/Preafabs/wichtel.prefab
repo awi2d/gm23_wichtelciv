@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon_mushroom: {fileID: 21300000, guid: 2bca3dcbb72c04e4d9f34edc0b6c357f, type: 3}
-  icon_wood: {fileID: 21300000, guid: 2bca3dcbb72c04e4d9f34edc0b6c357f, type: 3}
+  icon_wood: {fileID: 21300000, guid: 6a703231bd2dec048ac44d1f0fc2ca06, type: 3}
   icon_copper: {fileID: 21300000, guid: 2bca3dcbb72c04e4d9f34edc0b6c357f, type: 3}
   posx: 0
   posy: 0

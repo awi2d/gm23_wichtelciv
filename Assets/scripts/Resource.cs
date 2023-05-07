@@ -23,13 +23,12 @@ public class Resource : MonoBehaviour, Clickable
             text.GetComponent<TextMesh>().text = resource_String;
             textInWorld = GameObject.Instantiate(text);
             textInWorld.transform.position = transform.position;
-            resource = (int)rEnum.Copper;
             Debug.Log("Resource on " + this.posx + ", " + this.posy + ":\nesource = " + this.resource+ ", amount = "+this.amount);
         }
         if(lastObject != null && lastObject.name == worldgen.name_wicht)
         {
             Wichtel w = lastObject.GetComponent<Wichtel>();
-            if(w.get_posx() == posx && w.get_posy() == posy)
+            if(w.get_posx() == posx && w.get_posy() == posy && w.get_resource() < 0)
             {
                 w.set_resource(this.resource);
                 Debug.Log("Collect resource");

@@ -43,8 +43,51 @@ public class playerControll : MonoBehaviour
                 ground.GetComponent<Clickable>().OnGameTick();
             }
 
+            // kipp welt
+            // kipp about axis-x
+            float x_axis_weight = 0f;
+            float y_axis_weight = 0f;
+            foreach(GameObject clickable in worldgen.clickables){
+                float w = 0f;
+                if(clickable.name == worldgen.name_wicht){
+                    w = 0.1f;
+                }
+                if(clickable.name == worldgen.name_house){
+                    w = 0.3f;
+                }
+                if(clickable.name == worldgen.name_resource){
+                    w = 0.001f;
+                }
+                Clickable tmp = clickable.GetComponent<Clickable>();
+                x_axis_weight += w*(4.5f-tmp.get_posx()); // 4.5f, 0.5f is center of world, approximatly
+                y_axis_weight += w*(tmp.get_posy()-0.5f);
+            }
+            //maybe devide by total weight?
+            Debug.Log("axis weight: "+x_axis_weight+", "+y_axis_weight);
+            worldgen.rotate_world(y_axis_weight, x_axis_weight);// 1.-parameter: positiv kippt nach hinten. y-achse: positiv kippt nach links
+            foreach(GameObject clickable in worldgen.clickables){
+                Clickable tmp = clickable.GetComponent<Clickable>();
+                clickable.transform.position = worldgen.intpos2wordpos(tmp.get_posx(), tmp.get_posy());
+                if(clickable.name == worldgen.name_ground){
+                    clickable.transform.rotation = worldgen.world_rotation*worldgen.ground_rotation;
+                }else{
+                    if(clickable.name == worldgen.name_wicht){
+                        clickable.transform.position += worldgen.wichtel_offset;
+                    }
+                    if(clickable.name == worldgen.name_resource){
+                        clickable.transform.position += worldgen.resource_offset;
+                    }
+                    if(clickable.name == worldgen.name_house){
+                        clickable.transform.position += worldgen.haus_offset;
+                    }
+                    clickable.transform.rotation = worldgen.world_rotation;
+                }
+            }
+            // check for victory
+            if(worldgen.get_house(0, 0) != null && worldgen.get_house(4, -4) != null && worldgen.get_house(9, -4) != null && worldgen.get_house(9, 0) != null && worldgen.get_house(5, 4) != null && worldgen.get_house(0, 4) != null){
+                Debug.Log("Ritual completet, you won!");
+            }
         }
-        //TODO thema vom GameJam: Welt kippt wenn ungleich belasted.
     }
 
     // Update is called once per frame

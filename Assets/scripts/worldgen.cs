@@ -26,17 +26,39 @@ public class worldgen : MonoBehaviour
     private static double tilesize = 6.6; // ecke zu ecke
     private static double tilewidth = Mathf.Sqrt(3)*0.5*tilesize;  // distanz kante zu gegenüberliegender kante
     private static double rowheight = 1.5*0.5*tilesize; // length of one edge of the hexagone
-    public static Vector3 wichtel_offset = new Vector3((float) (tilesize*0.1), 1, 0);
-    public static Vector3 haus_offset = new Vector3(0, 2, (float) (tilesize*0.1));
-    public static Vector3 resource_offset = new Vector3((float) (-tilesize * 0.1), 1, 0);
+    public static Vector3 wichtel_offset = new Vector3((float) (tilesize*0.3), 1, 0);
+    public static Vector3 haus_offset = new Vector3(0, 1.5, (float) (tilesize*0.3));
+    public static Vector3 resource_offset = new Vector3((float) (-tilesize * 0.3), 1, 0);
     public static Transform this_transfrom = null;
     public static Quaternion ground_rotation;
+    public static Quaternion world_rotation;
 
+    public static void rotate_world(float x, float y){
+        if(x < -45.0f){
+            Debug.Log("The world lost balance, you lose.");
+            x = -45.0f;
+        }
+        if(x > 45.0f){
+            Debug.Log("The world lost balance, you lose.");
+            x = 45.0f;
+        }
+
+        if(y < -45.0f){
+            Debug.Log("The world lost balance, you lose.");
+            y = -45.0f;
+        }
+        if(y > 45.0f){
+            Debug.Log("The world lost balance, you lose.");
+            y = 45.0f;
+        }
+        world_rotation.eulerAngles = new Vector3(x, 0, y);
+    }
     //cache, sort of
     public static List<GameObject> clickables = new List<GameObject>();  // all objects that implement the Clickable interface, probably
-    
+
     public static Vector3 intpos2wordpos(int x, int y){
-        return new Vector3((float)(tilewidth*(x+0.5*y)), 0, (float)(rowheight*y));
+        Vector3 worldpos = new Vector3((float)(tilewidth*(x+0.5*y)), 0, (float)(rowheight*y));
+        return worldgen.world_rotation*worldpos;
     }
     public static void spawn_ground(int posx, int posy)
     {
@@ -72,6 +94,8 @@ public class worldgen : MonoBehaviour
         resource_obj.GetComponent<Resource>().posx = posx;
         resource_obj.GetComponent<Resource>().posy = posy;
         resource_obj.GetComponent<Resource>().resource_String = Enum.GetName(typeof(rEnum), type);
+        resource_obj.GetComponent<Resource>().resource = (int)type;
+        resource_obj.GetComponent<Resource>().amount = 1;
         resource_obj.transform.parent = this_transfrom;
         worldgen.clickables.Add(resource_obj);
     }
@@ -136,6 +160,7 @@ public class worldgen : MonoBehaviour
         {
             worldgen.this_transfrom = this.GetComponent<Transform>();
             worldgen.singelton_this = this;
+            worldgen.world_rotation = Quaternion.identity;
         }
         else
         {
