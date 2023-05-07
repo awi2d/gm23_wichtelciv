@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8156774945794111624}
   - component: {fileID: -5535480706016682234}
   - component: {fileID: -8337210695986317275}
+  - component: {fileID: 8881823732898311035}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -83,7 +84,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 669390228861739976}
-  m_Text: Mushroom
+  m_Text: We forgot
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
@@ -97,3 +98,15 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4278190186
+--- !u!114 &8881823732898311035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 669390228861739976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8036210f7b2e26c418c9c3dd295321d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

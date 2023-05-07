@@ -47,3 +47,4 @@ MonoBehaviour:
   ground_tile: {fileID: 8235011852328831480, guid: 3509f869c1a7d7a43807736de2f47392, type: 3}
   wichtel: {fileID: 8487629447286304125, guid: e16ed2359f8d10846b0faefdd421d8b2, type: 3}
   haus: {fileID: 1847790239870511902, guid: d7d15a7c680092444a67de2730839f21, type: 3}
+  resource: {fileID: 8160045445206107781, guid: 808d343e59d275448978135bf3032c10, type: 3}
