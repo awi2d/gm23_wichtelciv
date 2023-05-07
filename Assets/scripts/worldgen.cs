@@ -100,7 +100,7 @@ public class worldgen : MonoBehaviour
         resource_obj.GetComponent<Resource>().posx = posx;
         resource_obj.GetComponent<Resource>().posy = posy;
         resource_obj.GetComponent<Resource>().resource_String = Enum.GetName(typeof(rEnum), type);
-        resource_obj.GetComponent<Resource>().resource = (int)type;
+        resource_obj.GetComponent<Resource>().set_resourcetype((int)type);
         resource_obj.GetComponent<Resource>().amount = 1;
         resource_obj.transform.parent = this_transfrom;
         worldgen.clickables.Add(resource_obj);
