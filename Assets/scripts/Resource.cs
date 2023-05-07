@@ -18,7 +18,7 @@ public class Resource : MonoBehaviour, Clickable
 
     public void OnClick(GameObject lastObject)
     {
-        if (lastObject == null)
+        if (lastObject == null || lastObject.name == worldgen.name_ground)
         {
             text.GetComponent<TextMesh>().text = resource_String;
             textInWorld = GameObject.Instantiate(text);

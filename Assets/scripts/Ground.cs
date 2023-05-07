@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using ResourceNameSpace;
 
 public class Ground : MonoBehaviour, Clickable
 {
@@ -34,7 +35,7 @@ public class Ground : MonoBehaviour, Clickable
             }
         }
 
-        if(lastObject == null)
+        if(lastObject == null || lastObject.name == worldgen.name_ground)
         {
             Debug.Log("Ground on " + this.posx + ", " + this.posy);
         }
@@ -43,13 +44,20 @@ public class Ground : MonoBehaviour, Clickable
 
     public void OnGameTick()
     {
-        //throw new System.NotImplementedException();
         if(Random.Range(0, 10) >= 9)  // 0.1 chance das eine neue Resource entsteht
         {
             GameObject res = worldgen.get_resource(this.posx, this.posy);
             if(res == null)
             {
-                worldgen.spawn_resouce(this.posx, this.posy);
+                int itype = Random.Range(0, 4);
+                rEnum rtype = rEnum.Copper;
+                if(itype == 0){
+                    rtype = rEnum.Wood;
+                }
+                if(itype == 1){
+                    rtype = rEnum.Mushroom;
+                }
+                worldgen.spawn_resouce(this.posx, this.posy, rtype);
             }
             else
             {
