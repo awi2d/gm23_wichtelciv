@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ResourceNameSpace;
+using System;
 
 public class worldgen : MonoBehaviour
 {
@@ -62,12 +64,13 @@ public class worldgen : MonoBehaviour
         haus_obj.transform.parent = this_transfrom;
         worldgen.clickables.Add(haus_obj);
     }
-    public static void spawn_resouce(int posx, int posy)
+    public static void spawn_resouce(int posx, int posy, rEnum type)
     {
         GameObject resource_obj = Instantiate(worldgen.singelton_this.resource, intpos2wordpos(posx, posy) + resource_offset, Quaternion.identity);
         resource_obj.name = worldgen.name_resource;
         resource_obj.GetComponent<Resource>().posx = posx;
         resource_obj.GetComponent<Resource>().posy = posy;
+        resource_obj.GetComponent<Resource>().resource_String = Enum.GetName(typeof(rEnum), type);
         resource_obj.transform.parent = this_transfrom;
         worldgen.clickables.Add(resource_obj);
     }
@@ -166,7 +169,7 @@ public class worldgen : MonoBehaviour
         }
         for(int i=0; i< resource_startpos.Length; i++)
         {
-            worldgen.spawn_resouce(resource_startpos[i].x, resource_startpos[i].y);
+            worldgen.spawn_resouce(resource_startpos[i].x, resource_startpos[i].y, rEnum.Mushroom);
         }
     }
 }

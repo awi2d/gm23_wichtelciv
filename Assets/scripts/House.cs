@@ -20,7 +20,7 @@ public class House : MonoBehaviour, Clickable
 
             }
         }
-        if(lastObject == null)
+        if(lastObject == null || lastObject.name == worldgen.name_ground)
         {
             Debug.Log("House on " + this.posx + ", " + this.posy + ":\nnum_resources = " + this.num_resources);
         }

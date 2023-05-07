@@ -24,7 +24,7 @@ public class Wichtel : MonoBehaviour, Clickable
             worldgen.spawn_house(this.posx, this.posy);
             this.resource = -1;
         }
-        if(lastObject == null)
+        if(lastObject == null || lastObject.name == worldgen.name_ground)
         {
             Debug.Log("Wicht on " + this.posx + ", " + this.posy + ":\nresource = " + resource);
         }
