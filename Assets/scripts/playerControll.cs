@@ -58,7 +58,7 @@ public class playerControll : MonoBehaviour
                 if(clickable.name == worldgen.name_resource){
                     w = 0.002f;
                 }
-                Clickable tmp = clickable.GetComponent<Clickable>();
+                Clickable tmp = worldgen.get_clicker(clickable);
                 x_axis_weight += w*(4.5f-tmp.get_posx()); // 4.5f, 0.5f is center of world, approximatly
                 y_axis_weight += w*(tmp.get_posy()-0.5f);
             }
@@ -66,7 +66,7 @@ public class playerControll : MonoBehaviour
             Debug.Log("axis weight: "+x_axis_weight+", "+y_axis_weight);
             worldgen.rotate_world(y_axis_weight, x_axis_weight);// 1.-parameter: positiv kippt nach hinten. y-achse: positiv kippt nach links
             foreach(GameObject clickable in worldgen.clickables){
-                Clickable tmp = clickable.GetComponent<Clickable>();
+                Clickable tmp = worldgen.get_clicker(clickable);
                 clickable.transform.position = worldgen.intpos2wordpos(tmp.get_posx(), tmp.get_posy());
                     if(clickable.name == worldgen.name_wicht){
                         clickable.transform.position += worldgen.wichtel_offset;
@@ -97,19 +97,18 @@ public class playerControll : MonoBehaviour
             //raycast hit something <-> player clicked on something.
                 if (hit.transform.name != null)
                 {
-                    try
-                    {
-                        Clickable clicker = hit.transform.gameObject.GetComponent<Clickable>();
+                    Clickable clicker = worldgen.get_clicker(hit.transform.gameObject);
+                    
+                    if(clicker != null){
                         clicker.OnClick(lastObject);
                         if(lastObject != null){
-                            lastObject.GetComponent<Clickable>().unselect();
+                            worldgen.get_clicker(lastObject).unselect();
                         }
                         lastObject = hit.transform.gameObject;
+                    }else{
+                        Debug.Log("clicker of "+hit.transform.gameObject.name+" not found");
                     }
-                    catch (Exception e)
-                    {
-                        Debug.LogException(e);
-                    }   
+                        
                 }
                 else
                 {
@@ -117,7 +116,7 @@ public class playerControll : MonoBehaviour
                 }
         }else{
             if(lastObject != null){
-                lastObject.GetComponent<Clickable>().unselect();
+                worldgen.get_clicker(lastObject).unselect();
                 lastObject = null;
             }
             

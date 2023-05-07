@@ -36,6 +36,13 @@ public class worldgen : MonoBehaviour
     public static Quaternion ground_rotation;
     public static Quaternion world_rotation;
 
+    public static Clickable get_clicker(GameObject obj){
+        if(obj.name == worldgen.name_ground){
+            return obj.transform.Find("Cylinder").gameObject.GetComponent<Clickable>();
+        }else{
+            return obj.GetComponent<Clickable>();
+        }
+    }
     public static void rotate_world(float x, float y){
         if(x < -45.0f){
             Debug.Log("The world lost balance, you lose.");
@@ -66,8 +73,8 @@ public class worldgen : MonoBehaviour
     public static void spawn_ground(int posx, int posy)
     {
         GameObject gt = Instantiate(worldgen.static_ground_tile[UnityEngine.Random.Range(1, 4)], intpos2wordpos(posx, posy), Quaternion.identity);
-        gt.GetComponent<Ground>().posx = posx;
-        gt.GetComponent<Ground>().posy = posy;
+        gt.transform.Find("Cylinder").gameObject.GetComponent<Ground>().posx = posx;
+        gt.transform.Find("Cylinder").gameObject.GetComponent<Ground>().posy = posy;
         gt.name = worldgen.name_ground;
         gt.transform.parent = this_transfrom;
         worldgen.clickables.Add(gt);
@@ -114,7 +121,7 @@ public class worldgen : MonoBehaviour
         List<GameObject> r = new List<GameObject> ();
         foreach(GameObject obj in worldgen.clickables)
         {
-            if(obj.GetComponent<Clickable>().get_posx() == posx && obj.GetComponent<Clickable>().get_posy() == posy)
+            if(worldgen.get_clicker(obj).get_posx() == posx && worldgen.get_clicker(obj).get_posy() == posy)
             {
                 r.Add(obj);
             }
@@ -126,7 +133,7 @@ public class worldgen : MonoBehaviour
     {
         foreach (GameObject obj in worldgen.clickables)
         {
-            if (obj.GetComponent<Clickable>().get_posx() == posx && obj.GetComponent<Clickable>().get_posy() == posy && obj.name == worldgen.name_wicht)
+            if (obj.name == worldgen.name_wicht && worldgen.get_clicker(obj).get_posx() == posx && worldgen.get_clicker(obj).get_posy() == posy)
             {
                 return obj;
             }
@@ -138,7 +145,7 @@ public class worldgen : MonoBehaviour
     {
         foreach (GameObject obj in worldgen.clickables)
         {
-            if (obj.GetComponent<Clickable>().get_posx() == posx && obj.GetComponent<Clickable>().get_posy() == posy && obj.name == worldgen.name_house)
+            if (worldgen.get_clicker(obj).get_posx() == posx && worldgen.get_clicker(obj).get_posy() == posy && obj.name == worldgen.name_house)
             {
                 return obj;
             }
@@ -150,7 +157,7 @@ public class worldgen : MonoBehaviour
     {
         foreach (GameObject obj in worldgen.clickables)
         {
-            if (obj.GetComponent<Clickable>().get_posx() == posx && obj.GetComponent<Clickable>().get_posy() == posy && obj.name == worldgen.name_resource)
+            if (worldgen.get_clicker(obj).get_posx() == posx && worldgen.get_clicker(obj).get_posy() == posy && obj.name == worldgen.name_resource)
             {
                 return obj;
             }
@@ -199,7 +206,7 @@ public class worldgen : MonoBehaviour
         }
         for(int i=0; i< resource_startpos.Length; i++)
         {
-            worldgen.spawn_resouce(resource_startpos[i].x, resource_startpos[i].y, rEnum.Mushroom);
+            worldgen.spawn_resouce(resource_startpos[i].x, resource_startpos[i].y, rEnum.Wood);
         }
     }
 }
