@@ -68,9 +68,6 @@ public class playerControll : MonoBehaviour
             foreach(GameObject clickable in worldgen.clickables){
                 Clickable tmp = clickable.GetComponent<Clickable>();
                 clickable.transform.position = worldgen.intpos2wordpos(tmp.get_posx(), tmp.get_posy());
-                if(clickable.name == worldgen.name_ground){
-                    clickable.transform.rotation = worldgen.world_rotation*worldgen.ground_rotation;
-                }else{
                     if(clickable.name == worldgen.name_wicht){
                         clickable.transform.position += worldgen.wichtel_offset;
                     }
@@ -81,7 +78,6 @@ public class playerControll : MonoBehaviour
                         clickable.transform.position += worldgen.haus_offset;
                     }
                     clickable.transform.rotation = worldgen.world_rotation;
-                }
             }
             // check for victory
             if(worldgen.get_house(0, 0) != null && worldgen.get_house(4, -4) != null && worldgen.get_house(9, -4) != null && worldgen.get_house(9, 0) != null && worldgen.get_house(5, 4) != null && worldgen.get_house(0, 4) != null){

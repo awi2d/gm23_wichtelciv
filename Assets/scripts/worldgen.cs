@@ -8,6 +8,9 @@ public class worldgen : MonoBehaviour
 {
     //to be set to the prefabs in the unity editor
     public GameObject ground_tile;
+    public GameObject ground_tile1;
+    public GameObject ground_tile2;
+    public GameObject ground_tile3;
     public GameObject wichtel;
     public GameObject haus;
     public GameObject resource;
@@ -22,12 +25,12 @@ public class worldgen : MonoBehaviour
     public static string name_house = "house";
     public static string name_ground = "ground";
     public static string name_resource = "resource";
-    public static GameObject static_ground_tile;
+    public static GameObject[] static_ground_tile;
     private static double tilesize = 6.6; // ecke zu ecke
     private static double tilewidth = Mathf.Sqrt(3)*0.5*tilesize;  // distanz kante zu gegenüberliegender kante
     private static double rowheight = 1.5*0.5*tilesize; // length of one edge of the hexagone
     public static Vector3 wichtel_offset = new Vector3((float) (tilesize*0.3), 1, 0);
-    public static Vector3 haus_offset = new Vector3(0, 2.5f, (float) (tilesize*0.3));
+    public static Vector3 haus_offset = new Vector3(0, 1.1f, (float) (tilesize*0.3));
     public static Vector3 resource_offset = new Vector3((float) (-tilesize * 0.3), 1, 0);
     public static Transform this_transfrom = null;
     public static Quaternion ground_rotation;
@@ -62,7 +65,7 @@ public class worldgen : MonoBehaviour
     }
     public static void spawn_ground(int posx, int posy)
     {
-        GameObject gt = Instantiate(worldgen.singelton_this.ground_tile, intpos2wordpos(posx, posy), worldgen.ground_rotation);
+        GameObject gt = Instantiate(worldgen.static_ground_tile[UnityEngine.Random.Range(1, 4)], intpos2wordpos(posx, posy), Quaternion.identity);
         gt.GetComponent<Ground>().posx = posx;
         gt.GetComponent<Ground>().posy = posy;
         gt.name = worldgen.name_ground;
@@ -80,7 +83,7 @@ public class worldgen : MonoBehaviour
     }
     public static void spawn_house(int posx, int posy)
     {
-        GameObject haus_obj = Instantiate(worldgen.singelton_this.haus, intpos2wordpos(posx, posy), Quaternion.identity);
+        GameObject haus_obj = Instantiate(worldgen.singelton_this.haus, intpos2wordpos(posx, posy)+worldgen.haus_offset, Quaternion.identity);
         haus_obj.name = worldgen.name_house;
         haus_obj.GetComponent<House>().posx = posx;
         haus_obj.GetComponent<House>().posy = posy;
@@ -161,6 +164,7 @@ public class worldgen : MonoBehaviour
             worldgen.this_transfrom = this.GetComponent<Transform>();
             worldgen.singelton_this = this;
             worldgen.world_rotation = Quaternion.identity;
+            worldgen.static_ground_tile = new GameObject[]{this.ground_tile, this.ground_tile1, this.ground_tile2, this.ground_tile3};
         }
         else
         {
