@@ -31,7 +31,7 @@ public class Resource : MonoBehaviour, Clickable
             Wichtel w = lastObject.GetComponent<Wichtel>();
             if(w.get_posx() == posx && w.get_posy() == posy)
             {
-                w.resource = this.resource;
+                w.set_resource(this.resource);
                 Debug.Log("Collect resource");
                 this.amount--;
                 if (this.amount <= 0)

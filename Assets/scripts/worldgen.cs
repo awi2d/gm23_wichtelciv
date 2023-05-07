@@ -34,6 +34,7 @@ public class worldgen : MonoBehaviour
 
     //cache, sort of
     public static List<GameObject> clickables = new List<GameObject>();  // all objects that implement the Clickable interface, probably
+    
     public static Vector3 intpos2wordpos(int x, int y){
         return new Vector3((float)(tilewidth*(x+0.5*y)), 0, (float)(rowheight*y));
     }

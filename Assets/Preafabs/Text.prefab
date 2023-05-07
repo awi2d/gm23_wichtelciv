@@ -84,7 +84,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 669390228861739976}
-  m_Text: We forgot
+  m_Text: Mushroom
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
