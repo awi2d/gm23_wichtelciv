@@ -66,8 +66,7 @@ public class playerControll : MonoBehaviour
             
         }
     }
-
-    if (Input.GetKey(KeyCode.Return))
+    if (Input.GetKeyUp(KeyCode.Return))
         {
             Debug.Log("runde weiter");
             Wichtel[] wichtel = (Wichtel[])GameObject.FindObjectsOfType(typeof(Wichtel));
@@ -88,28 +87,53 @@ public class playerControll : MonoBehaviour
 
             // kipp welt
             // kipp about axis-x
-            float x_axis_weight = 0f;
+            float x_axis_weight = 0f;  // [Nm] drehmoment
             float y_axis_weight = 0f;
-            foreach(GameObject clickable in worldgen.clickables){
+            float x_axis_absweight = 0f;  // [?] inertia
+            float y_axis_absweight = 0f;
+            float center_x = 0f;
+            float center_z = 0f;
+            int groundcount = 0;
+            //re-calculating the center every turn seems be unnesary, but for unknown reasons, it changes. (maybe becouse the ground tiles get rotatet?)
+            foreach (GameObject clickable in worldgen.clickables)
+            {
+                if(clickable.name == worldgen.name_ground)
+                {
+                    center_x += clickable.transform.position.x;
+                    center_z += clickable.transform.position.z;
+                    groundcount++;
+                }
+            }
+            center_x /= groundcount;
+            center_z /= groundcount;
+            Debug.Log("center = (" + center_x + ", " + center_z + ")");
+            foreach (GameObject clickable in worldgen.clickables){
                 float w = 0f;
                 if(clickable.name == worldgen.name_wicht){
-                    w = 0.2f;
+                    w = 2.0f;
                 }
                 if(clickable.name == worldgen.name_house){
-                    w = 0.4f;
+                    w = 4.0f;
                 }
                 if(clickable.name == worldgen.name_resource){
-                    w = (float)(0.002f*clickable.GetComponent<Resource>().amount);
+                    w = (float)(0.02f*clickable.GetComponent<Resource>().amount);
                 }
-                Clickable tmp = worldgen.get_clicker(clickable);
-                x_axis_weight += w*(4.5f-tmp.get_posx()); // 4.5f, 0.5f is center of world, approximatly
-                y_axis_weight += w*(tmp.get_posy()-0.5f);
+                if (clickable.name == worldgen.name_ground)
+                {
+                    w = 0.1f; // Der Boden besteht aus Hohlen plastik-attrappen, deswegen ist der so Leicht.
+                }
+                float posx = clickable.transform.position.x;
+                float posz = clickable.transform.position.z;
+                x_axis_weight += w*(posx - center_x); // 4.5f, 0.5f is center of world, approximatly TODO calculate center so that ground is balanced
+                y_axis_weight += w*(posz - center_z);
+                x_axis_absweight += w * Mathf.Abs(posx - center_x);
+                y_axis_absweight += w * Mathf.Abs(posz - center_z);
             }
             //maybe devide by total weight?
-            Debug.Log("axis weight: "+x_axis_weight+", "+y_axis_weight);
-            this.x_yaw += 0.5f*x_axis_weight;
-            this.y_yaw += 0.5f*y_axis_weight;
-            worldgen.rotate_world(this.y_yaw, this.x_yaw);// 1.-parameter: positiv kippt nach hinten. y-achse: positiv kippt nach links
+            Debug.Log("axis weight: "+x_axis_weight/x_axis_absweight+", "+y_axis_weight/y_axis_absweight);
+            this.x_yaw += 10*x_axis_weight/x_axis_absweight;
+            this.y_yaw += 10*y_axis_weight/y_axis_absweight;
+            worldgen.rotate_world(this.y_yaw, -this.x_yaw);// 1.-parameter: positiv kippt nach hinten. y-achse: positiv kippt nach links
             if(this.x_yaw < -90.0f || this.x_yaw > 90.0f || this.y_yaw < -90.0f || this.y_yaw > 90.0f){
                 Debug.Log("The world lost balance, you lose.");
                 Application.Quit();
@@ -132,6 +156,12 @@ public class playerControll : MonoBehaviour
             if(worldgen.get_house(0, 0) != null && worldgen.get_house(4, -4) != null && worldgen.get_house(9, -4) != null && worldgen.get_house(9, 0) != null && worldgen.get_house(5, 4) != null && worldgen.get_house(0, 4) != null){
                 Debug.Log("Ritual completet, you won!");
 
+            }
+
+            if (lastObject != null)
+            {
+                worldgen.get_clicker(lastObject).unselect();
+                lastObject = null;
             }
         }
  }

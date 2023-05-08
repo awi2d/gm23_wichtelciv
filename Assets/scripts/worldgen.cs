@@ -15,8 +15,8 @@ public class worldgen : MonoBehaviour
     public GameObject haus;
     public GameObject resource;
     Vector2Int[] wicht_startpos = new[] {new Vector2Int(4, 0) };
-    Vector2Int[] haus_startpos = new[] {new Vector2Int(4, 0)};
-    Vector2Int[] resource_startpos = new[] {new Vector2Int(4, -1), new Vector2Int(5, 1)};
+    Vector2Int[] haus_startpos = new[] {new Vector2Int(5, 0)};
+    Vector2Int[] resource_startpos = new[] {new Vector2Int(4, 1), new Vector2Int(5, -1) };
     public const int mapsize = 5;
 
     //constants
@@ -63,7 +63,7 @@ public class worldgen : MonoBehaviour
     public static List<GameObject> clickables = new List<GameObject>();  // all objects that implement the Clickable interface, probably
 
     public static Vector3 intpos2wordpos(int x, int y){
-        Vector3 worldpos = new Vector3((float)(tilewidth*(x+0.5*y)), 0, (float)(rowheight*y));
+        Vector3 worldpos = new Vector3((float)(tilewidth*(x+0.5*y)-25.72), 0, (float)(rowheight*y-0)); // 25.72, 0 is so that center of world is at (0, 0), because world rotates around (0, 0)
         return worldgen.world_rotation*worldpos;
     }
     public static void spawn_ground(int posx, int posy)
@@ -86,6 +86,7 @@ public class worldgen : MonoBehaviour
     }
     public static void spawn_house(int posx, int posy)
     {
+        Debug.Log("worldgen.singelton_this.haus = "+ worldgen.singelton_this.haus);
         GameObject haus_obj = Instantiate(worldgen.singelton_this.haus, intpos2wordpos(posx, posy)+worldgen.haus_offset, Quaternion.identity);
         haus_obj.name = worldgen.name_house;
         haus_obj.GetComponent<House>().posx = posx;
