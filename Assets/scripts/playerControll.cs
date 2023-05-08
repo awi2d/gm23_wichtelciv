@@ -15,6 +15,7 @@ public class playerControll : MonoBehaviour
     private float x_yaw = 0;
     private float y_yaw = 0;
 
+    private static KeyCode[] hotkeys = new KeyCode[] { KeyCode.R, KeyCode.T, KeyCode.Z, KeyCode.F, KeyCode.G, KeyCode.H, KeyCode.C, KeyCode.V, KeyCode.B};
     // Start is called before the first frame update
     void Start()
     {
@@ -45,26 +46,49 @@ public class playerControll : MonoBehaviour
                     
                     if(clicker != null){
                         clicker.OnClick(lastObject);
-                        if(lastObject != null){
-                            worldgen.get_clicker(lastObject).unselect();
+                        if (lastObject != null && lastObject.name == worldgen.name_wicht && hit.transform.gameObject.name == "Cylinder")
+                        {
+                            //keep wichtel selected after move action
                         }
-                        lastObject = hit.transform.gameObject;
+                        else
+                        {
+                            // set this.last_object
+                            if (lastObject != null)
+                            {
+                                worldgen.get_clicker(lastObject).unselect();
+                            }
+                            Debug.Log("set lastObject to "+ hit.transform.gameObject.name);
+                            lastObject = hit.transform.gameObject;
+                        }
+                        
                     }else{
                         Debug.Log("clicker of "+hit.transform.gameObject.name+" not found");
                     }
-                        
                 }
                 else
                 {
                     
                 }
         }else{
-            if(lastObject != null){
+            if(lastObject != null)
+                {
                 worldgen.get_clicker(lastObject).unselect();
                 lastObject = null;
-            }
-            
+                Debug.Log("set lastObject to mull");
+                }
         }
+    }
+    // give keypresses to this.lastObject to make hotkeys work
+    if(this.lastObject != null)
+    {
+        foreach(KeyCode key in playerControll.hotkeys)
+            {
+                if (Input.GetKeyUp(key))
+                {
+                    worldgen.get_clicker(this.lastObject).keyPressed(key);
+                }
+                
+            }
     }
     if (Input.GetKeyUp(KeyCode.Return))
         {
@@ -145,7 +169,7 @@ public class playerControll : MonoBehaviour
                         clickable.transform.position += worldgen.wichtel_offset;
                     }
                     if(clickable.name == worldgen.name_resource){
-                        clickable.transform.position += worldgen.resource_offset;
+                        clickable.transform.position += worldgen.resource_offset[clickable.GetComponent<Resource>().get_resourcetype()];
                     }
                     if(clickable.name == worldgen.name_house){
                         clickable.transform.position += worldgen.haus_offset;

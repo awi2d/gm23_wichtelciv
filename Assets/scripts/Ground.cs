@@ -44,31 +44,31 @@ public class Ground : MonoBehaviour, Clickable
 
     public void OnGameTick()
     {
-        if(Random.Range(0, 100) == 9)  // 0.1 chance das eine neue Resource entsteht
+        if(Random.Range(0, 10) == 9)  // 0.1 chance das eine neue Resource entsteht
         {
-            GameObject res = worldgen.get_resource(this.posx, this.posy);
-            if(res == null)
+            int itype = Random.Range(0, 4);
+            rEnum rtype = rEnum.Copper;
+            if (itype == 0)
             {
-                int itype = Random.Range(0, 4);
-                rEnum rtype = rEnum.Copper;
-                if(itype == 0){
-                    rtype = rEnum.Wood;
-                }
-                if(itype == 1){
-                    rtype = rEnum.Mushroom;
-                }
-                worldgen.spawn_resouce(this.posx, this.posy, rtype);
+                rtype = rEnum.Wood;
             }
-            else
+            if (itype == 1)
             {
-                res.GetComponent<Resource>().amount++;
+                rtype = rEnum.Mushroom;
             }
+
+            worldgen.spawn_resouce(this.posx, this.posy, rtype);
         }
 
     }
 
     public void unselect(){
         
+    }
+
+    public void keyPressed(KeyCode key)
+    {
+
     }
     public int get_posx()
     {
@@ -82,7 +82,7 @@ public class Ground : MonoBehaviour, Clickable
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame

@@ -6,34 +6,32 @@ public class House : MonoBehaviour, Clickable
 {
     public int posx;
     public int posy;
-    int num_resources = 0;
     public void OnClick(GameObject lastObject)
     {
-        if(lastObject != null && lastObject.name == worldgen.name_wicht)
-        {
-            Wichtel w = lastObject.GetComponent<Wichtel>();
-            if (w.posx == this.posx && w.posy == this.posy && w.get_resource() >= 0)
-            {
-                this.num_resources++;
-                w.set_resource(-1);
-                Debug.Log("add Resource to house");
-
-            }
-        }
         if(lastObject == null || lastObject.name == worldgen.name_ground)
         {
-            Debug.Log("House on " + this.posx + ", " + this.posy + ":\nnum_resources = " + this.num_resources);
+            Debug.Log("House on " + this.posx + ", " + this.posy + ":\nnum_resources = ");
         }
+    }
+
+    public void keyPressed(KeyCode key)
+    {
+
     }
 
     public void OnGameTick()
     {
-        if(this.num_resources > 0 && worldgen.get_wicht(this.posx, this.posy) == null)
+        if(worldgen.get_wicht(this.posx, this.posy) == null)
         {
-            Debug.Log("Spawn wicht on house");
-            worldgen.spawn_wicht(this.posx, this.posy);
-            this.num_resources--;
+            GameObject res = worldgen.get_resource(this.posx, this.posy);
+            if (res != null)
+            {
+                res.GetComponent<Resource>().gather_this_resource();
+                worldgen.spawn_wicht(this.posx, this.posy);
+                return;
+            }
         }
+        
     }
 
     public void unselect(){
@@ -47,6 +45,7 @@ public class House : MonoBehaviour, Clickable
     {
         return this.posy;
     }
+
     // Start is called before the first frame update
     void Start()
     {

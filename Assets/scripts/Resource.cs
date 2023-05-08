@@ -8,7 +8,7 @@ public class Resource : MonoBehaviour, Clickable
 {
     public GameObject text;
     public string resource_String;
-    private int resource_type;
+    private rEnum resource_type;
     public int amount;
 
     public int posx;
@@ -31,24 +31,34 @@ public class Resource : MonoBehaviour, Clickable
             if(w.get_posx() == posx && w.get_posy() == posy && w.get_resource() < 0)
             {
                 w.set_resource(this.get_resourcetype());
-                Debug.Log("Collect resource");
-                this.amount--;
-                if (this.amount <= 0)
-                {
-                    worldgen.destroy_resource(this.gameObject);
-                }
+                this.gather_this_resource();
             }
         }
     }
 
-    public void set_resourcetype(int type){
-        this.resource_type = type;
-        this.transform.GetChild(0).gameObject.SetActive(type==0);
-        this.transform.GetChild(1).gameObject.SetActive(type==1);
-        this.transform.GetChild(2).gameObject.SetActive(type==2);
+    public void gather_this_resource()
+    {
+        Debug.Log("Gather resource");
+        this.amount--;
+        if (this.amount <= 0)
+        {
+            worldgen.destroy_resource(this.gameObject);
+        }
     }
 
-    public int get_resourcetype(){
+    public void keyPressed(KeyCode key)
+    {
+
+    }
+
+    public void set_resourcetype(rEnum type){
+        this.resource_type = type;
+        this.transform.GetChild(0).gameObject.SetActive(type==rEnum.Copper);//just hope that the childs have correct ordering
+        this.transform.GetChild(1).gameObject.SetActive(type==rEnum.Wood);
+        this.transform.GetChild(2).gameObject.SetActive(type==rEnum.Mushroom);
+    }
+
+    public rEnum get_resourcetype(){
         return this.resource_type;
     }
 
@@ -72,7 +82,7 @@ public class Resource : MonoBehaviour, Clickable
     // Start is called before the first frame update
     void Start()
     {
-        
+        this.amount = 1;
     }
 
     // Update is called once per frame

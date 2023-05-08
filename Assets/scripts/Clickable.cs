@@ -10,5 +10,8 @@ public interface Clickable
     public abstract void OnClick(GameObject lastObject);
     public abstract void unselect();
 
+    public abstract void keyPressed(KeyCode key);
+
     public abstract void OnGameTick();
+
 }

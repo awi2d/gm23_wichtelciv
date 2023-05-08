@@ -29,9 +29,13 @@ public class worldgen : MonoBehaviour
     private static double tilesize = 6.6; // ecke zu ecke
     private static double tilewidth = Mathf.Sqrt(3)*0.5*tilesize;  // distanz kante zu gegenüberliegender kante
     private static double rowheight = 1.5*0.5*tilesize; // length of one edge of the hexagone
-    public static Vector3 wichtel_offset = new Vector3((float) (tilesize*0.3), 1, 0);
-    public static Vector3 haus_offset = new Vector3(0, 1.1f, (float) (tilesize*0.3));
-    public static Vector3 resource_offset = new Vector3((float) (-tilesize * 0.3), 1, 0);
+    public static Vector3 wichtel_offset = new Vector3((float) (tilesize*0.2), 1, 0);
+    public static Vector3 haus_offset = new Vector3(0, 1.1f, (float) (tilesize*0.2));
+    public static Dictionary<rEnum, Vector3> resource_offset = new Dictionary<rEnum, Vector3>() { 
+        {rEnum.Copper, new Vector3((float)(-tilesize * 0.3), 1, 0) }, 
+        {rEnum.Wood, new Vector3((float)(-tilesize * 0.15), 1, (float)(-tilesize * 0.2f)) },
+        {rEnum.Mushroom, new Vector3((float)(-tilesize * 0.15), 1, (float)(tilesize * 0.1f)) }
+    };
     public static Transform this_transfrom = null;
     public static Quaternion ground_rotation;
     public static Quaternion world_rotation;
@@ -69,9 +73,11 @@ public class worldgen : MonoBehaviour
     public static void spawn_ground(int posx, int posy)
     {
         GameObject gt = Instantiate(worldgen.static_ground_tile[UnityEngine.Random.Range(1, 4)], intpos2wordpos(posx, posy), Quaternion.identity);
+        //"Cylinder"
         gt.transform.Find("Cylinder").gameObject.GetComponent<Ground>().posx = posx;
         gt.transform.Find("Cylinder").gameObject.GetComponent<Ground>().posy = posy;
         gt.name = worldgen.name_ground;
+        
         gt.transform.parent = this_transfrom;
         worldgen.clickables.Add(gt);
     }
@@ -96,12 +102,23 @@ public class worldgen : MonoBehaviour
     }
     public static void spawn_resouce(int posx, int posy, rEnum type)
     {
-        GameObject resource_obj = Instantiate(worldgen.singelton_this.resource, intpos2wordpos(posx, posy) + resource_offset, Quaternion.identity);
+        foreach (GameObject obj in worldgen.clickables)
+        {
+            if (obj.name == worldgen.name_resource && worldgen.get_clicker(obj).get_posx() == posx && worldgen.get_clicker(obj).get_posy() == posy)
+            {
+                if(obj.GetComponent<Resource>().get_resourcetype() == type)
+                {
+                    obj.GetComponent<Resource>().amount++;
+                    return;
+                }
+            }
+        }
+        GameObject resource_obj = Instantiate(worldgen.singelton_this.resource, intpos2wordpos(posx, posy) + resource_offset[type], Quaternion.identity);
         resource_obj.name = worldgen.name_resource;
         resource_obj.GetComponent<Resource>().posx = posx;
         resource_obj.GetComponent<Resource>().posy = posy;
         resource_obj.GetComponent<Resource>().resource_String = Enum.GetName(typeof(rEnum), type);
-        resource_obj.GetComponent<Resource>().set_resourcetype((int)type);
+        resource_obj.GetComponent<Resource>().set_resourcetype(type);
         resource_obj.GetComponent<Resource>().amount = 1;
         resource_obj.transform.parent = this_transfrom;
         worldgen.clickables.Add(resource_obj);
