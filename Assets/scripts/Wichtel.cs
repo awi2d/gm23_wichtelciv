@@ -10,18 +10,18 @@ public class Wichtel : MonoBehaviour, Clickable
     public Sprite icon_mushroom;
     public Sprite icon_wood;
     public Sprite icon_copper;
-    bool moveable = true;
+    private int max_moves = 2;
+    private int moves_left;
     private rEnum resource;  // <0 := no resource, otherwise as in ResourceNameSpace
     private ParticleSystem particlesystem;
     
     public int posx;
     public int posy;
     
+    //TODO particle keep spawning after movement, as this wichtel is not deselected.
     public void OnClick(GameObject lastObject)
     {
-        if(this.moveable){
-            this.particlesystem.enableEmission = true;
-        }
+        InWorldUi.draw_lines(this.posx, this.posy, this.moves_left);
         if (lastObject == this.gameObject && resource != rEnum.None && worldgen.get_house(this.posx, this.posy) == null)
         {
             Debug.Log("bould house");
@@ -79,6 +79,22 @@ public class Wichtel : MonoBehaviour, Clickable
         //build other house types
     }
 
+    public void move(Ground target)
+    {
+        //center = (0, 0), linksdrüber = (1, -1), rechtsdrüber = (0, -1), rechts = (-1, 0), rechtsdrunter = (-1, 1), linksdrunter = (0, 1), links = (1, 1)
+        //not in list: (1, 0), (-1, -1)
+        int dist = worldgen.get_hex_dist(this.posx, this.posy, target.posx, target.posy);
+        if (dist <= this.moves_left)
+        {
+            this.transform.position = target.transform.position + worldgen.wichtel_offset;
+            this.posx = target.posx;
+            this.posy = target.posy;
+            this.moves_left -= dist;
+            InWorldUi.draw_lines(this.posx, this.posy, this.moves_left);
+        }
+        
+    }
+
     public void set_resource(rEnum type){
         this.resource = type;
         if(type == rEnum.None)
@@ -104,7 +120,8 @@ public class Wichtel : MonoBehaviour, Clickable
     }
 
     public void unselect(){
-        this.particlesystem.enableEmission = false;
+        //remove InWorldUI
+        InWorldUi.remove_lines();
     }
     public int get_posx()
     {
@@ -115,19 +132,14 @@ public class Wichtel : MonoBehaviour, Clickable
         return this.posy;
     }
 
-    public bool getmoveable()
-    {
-        return moveable;
-    }
-    public void setmoveable(bool sm){
-        this.moveable = sm;
-    }
     // Start is called before the first frame update
     void Start()
     {
         this.particlesystem = GetComponent<ParticleSystem>();
-        this.particlesystem.enableEmission = false;
+        //this.particlesystem.enableEmission = false;
+        this.particlesystem.Stop();
         this.set_resource(rEnum.None);
+        this.moves_left = this.max_moves;
     }
 
 
@@ -140,6 +152,6 @@ public class Wichtel : MonoBehaviour, Clickable
 
     public void OnGameTick()
     {
-        this.moveable = true;
+        this.moves_left = this.max_moves;
     }
 }

@@ -26,9 +26,11 @@ public class worldgen : MonoBehaviour
     public static string name_ground = "ground";
     public static string name_resource = "resource";
     public static GameObject[] static_ground_tile;
-    private static double tilesize = 6.6; // ecke zu ecke
+
+    public static double tilesize = 6.6; // ecke zu ecke
     private static double tilewidth = Mathf.Sqrt(3)*0.5*tilesize;  // distanz kante zu gegenüberliegender kante
     private static double rowheight = 1.5*0.5*tilesize; // length of one edge of the hexagone
+
     public static Vector3 wichtel_offset = new Vector3((float) (tilesize*0.2), 1, 0);
     public static Vector3 haus_offset = new Vector3(0, 1.1f, (float) (tilesize*0.2));
     public static Dictionary<rEnum, Vector3> resource_offset = new Dictionary<rEnum, Vector3>() { 
@@ -178,6 +180,33 @@ public class worldgen : MonoBehaviour
         }
         return null;
     }
+
+    public static GameObject get_ground(int posx, int posy)
+    {
+        foreach (GameObject obj in worldgen.clickables)
+        {
+            if (worldgen.get_clicker(obj).get_posx() == posx && worldgen.get_clicker(obj).get_posy() == posy && obj.name == worldgen.name_ground)//TODO or "Cylinder"
+            {
+                return obj;
+            }
+        }
+        return null;
+    }
+
+    public static int get_hex_dist(int posa_x, int posa_y, int posb_x, int posb_y)
+    {
+        int dx = posa_x - posb_x;
+        int dy = posa_y - posb_y;
+
+        if(Mathf.Sign(dx) == Mathf.Sign(dy)){
+            return Math.Abs(dx + dy);
+        }
+        else
+        {
+            return Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
+        }
+    }
+
     void Start()
     {
         if(worldgen.this_transfrom == null)

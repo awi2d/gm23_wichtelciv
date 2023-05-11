@@ -27,11 +27,37 @@ public class playerControll : MonoBehaviour
         // Move camera
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-        transform.position = transform.position - new Vector3(this.movementSpeed*horizontalInput, 0, this.movementSpeed*verticalInput);
+        //TODO movement is unaffected by camara rotation
+        transform.position = transform.position + Quaternion.Euler(new Vector3(0, this.transform.rotation.eulerAngles[1], 0)) * new Vector3(this.movementSpeed*horizontalInput, 0, this.movementSpeed*verticalInput);
+        if (Input.GetKey(KeyCode.Q))
+        {
+            //rotate camera left
+            transform.rotation = Quaternion.Euler(new Vector3(0, -1, 0)) * transform.rotation;
+        }
+        if (Input.GetKey(KeyCode.E))
+        {
+            transform.rotation = Quaternion.Euler(new Vector3(0, 1, 0)) * transform.rotation;
+        }
         
     }
 
-    // Update is called once per frame
+    private void set_lastObject(GameObject new_lastObject)
+    {
+        if (lastObject != null)
+        {
+            //worldgen.get_clicker(lastObject).unselect();
+        }
+        if(new_lastObject != null)
+        {
+            Debug.Log("set lastObject to " + new_lastObject.name);
+        }
+        else
+        {
+            Debug.Log("set lastObject to null");
+        }
+        
+        lastObject = new_lastObject;
+    }
  void Update() {
     //if mouse is clicked:
     //  get what was clicked on (unit, city or tile) and act accordingly (selecting that thing or moving the selected unit to that tile)
@@ -40,42 +66,33 @@ public class playerControll : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast( ray, out hit, 100 )) {
             //raycast hit something <-> player clicked on something.
-                if (hit.transform.name != null)
-                {
-                    Clickable clicker = worldgen.get_clicker(hit.transform.gameObject);
-                    
-                    if(clicker != null){
-                        clicker.OnClick(lastObject);
-                        if (lastObject != null && lastObject.name == worldgen.name_wicht && hit.transform.gameObject.name == "Cylinder")
+            if (hit.transform.name != null)
+            {
+                Clickable clicker = worldgen.get_clicker(hit.transform.gameObject);
+
+                if(clicker != null){
+                    if(this.lastObject != null && hit.transform.gameObject != this.lastObject)
                         {
-                            //keep wichtel selected after move action
+                            worldgen.get_clicker(this.lastObject).unselect();
                         }
-                        else
-                        {
-                            // set this.last_object
-                            if (lastObject != null)
-                            {
-                                worldgen.get_clicker(lastObject).unselect();
-                            }
-                            Debug.Log("set lastObject to "+ hit.transform.gameObject.name);
-                            lastObject = hit.transform.gameObject;
-                        }
-                        
-                    }else{
-                        Debug.Log("clicker of "+hit.transform.gameObject.name+" not found");
+                    clicker.OnClick(lastObject);
+
+                    if (lastObject != null && lastObject.name == worldgen.name_wicht && hit.transform.gameObject.name == "Cylinder")
+                    {
+                        //keep wichtel selected after move action
                     }
+                    else
+                    {
+                        // set this.last_object
+                        this.set_lastObject(hit.transform.gameObject);
+                    }
+                        
+                }else{
+                    Debug.Log("clicker of "+hit.transform.gameObject.name+" not found");
                 }
-                else
-                {
-                    
-                }
+            }
         }else{
-            if(lastObject != null)
-                {
-                worldgen.get_clicker(lastObject).unselect();
-                lastObject = null;
-                Debug.Log("set lastObject to mull");
-                }
+            this.set_lastObject(null);
         }
     }
     // give keypresses to this.lastObject to make hotkeys work
